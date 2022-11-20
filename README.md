@@ -11,7 +11,7 @@
 
 ## What is Snowimagined Shaders?
 
-Snowimagined Shaders, by SpacEagle17 and isuewo, is an edit of EminGT's Complementary Reimagined Shaders. It transforms your game into a beautiful winter wonderland.
+* Snowimagined Shaders, by SpacEagle17 and isuewo, is an edit of EminGT's Complementary Reimagined Shaders. It transforms your game into a beautiful winter wonderland.
 
 ## Screenshots
 
