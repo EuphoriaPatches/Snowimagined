@@ -22,18 +22,20 @@ in vec4 glColor;
 	flat in vec3 binormal, tangent;
 #endif
 
-#if WATER_STYLE >= 2 || defined FANCY_NETHERPORTAL || defined GENERATED_NORMALS
-	in vec2 signMidCoordPos;
-	flat in vec2 absMidCoordPos;
-#endif
+
+in vec2 signMidCoordPos;
+flat in vec2 absMidCoordPos;
 
 #if defined FANCY_NETHERPORTAL || WATER_STYLE >= 3
 	in vec3 viewVector;
 #endif
 
+in vec3 midUV;
+
 //Uniforms//
 uniform int isEyeInWater;
 uniform int frameCounter;
+uniform int blockEntityId;
 
 uniform float near;
 uniform float far;
@@ -55,9 +57,7 @@ uniform float viewHeight;
 
 uniform sampler2D texture;
 
-#if WATER_QUALITY >= 2 || WATER_STYLE >= 2 || defined FANCY_NETHERPORTAL
-	uniform sampler2D noisetex;
-#endif
+uniform sampler2D noisetex;
 
 #if defined OVERWORLD && CLOUD_QUALITY > 0
 	uniform sampler2D gaux1;
@@ -172,6 +172,10 @@ void main() {
 		dither = fract(dither + 1.61803398875 * mod(float(frameCounter), 3600.0));
 	#endif
 
+	float snowIntensity = 1.0;
+	float snowTransparentOverwrite = 0.0;
+	float snowFresnelMult = 1.0;
+
 	#if defined OVERWORLD && CLOUD_QUALITY > 0
 		float cloudLinearDepth = texelFetch(gaux1, texelCoord, 0).r;
 
@@ -205,10 +209,16 @@ void main() {
 	#else
 		if (mat == 31000) { // Water
 			#include "/lib/materials/specificMaterials/translucents/water.glsl"
+			snowIntensity = 0.0;
+			snowFresnelMult = 0.0;
 		} else {
 			fresnel *= 0.7;
+			snowTransparentOverwrite = 0.95;
 		}
 	#endif
+
+	#include "/lib/materials/snowMode.glsl"
+	fresnel = mix(fresnel, 0.01, snowVariable * snowFresnelMult);
 
 	// Blending
 	if (!translucentMultAlreadyCalculated) {
@@ -250,14 +260,14 @@ out vec3 normal;
 
 out vec4 glColor;
 
+out vec3 midUV; //useful to hardcode something to a specific pixel coordinate of a block
+
 #if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 || defined GENERATED_NORMALS
 	flat out vec3 binormal, tangent;
 #endif
 
-#if WATER_STYLE >= 2 || defined FANCY_NETHERPORTAL || defined GENERATED_NORMALS
-	out vec2 signMidCoordPos;
-	flat out vec2 absMidCoordPos;
-#endif
+out vec2 signMidCoordPos;
+flat out vec2 absMidCoordPos;
 
 #if defined FANCY_NETHERPORTAL || WATER_STYLE >= 3
 	out vec3 viewVector;
@@ -270,6 +280,7 @@ out vec4 glColor;
 
 //Attributes//
 attribute vec4 mc_Entity;
+attribute vec3 at_midBlock;
 
 #if WATER_STYLE >= 2 || defined FANCY_NETHERPORTAL || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 || defined GENERATED_NORMALS
 	attribute vec4 mc_midTexCoord;
@@ -295,6 +306,7 @@ void main() {
 
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	lmCoord  = GetLightMapCoordinates();
+	midUV = 0.5 - at_midBlock / 64.0;
 
 	glColor = gl_Color;
 

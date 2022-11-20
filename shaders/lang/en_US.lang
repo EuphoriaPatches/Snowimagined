@@ -9,7 +9,7 @@ profile.ULTRA=§dUltra
 profile.comment=Shader profiles change performance settings with the most optimised visual fidelity to performance ratio. It's recommended to use one of these profiles for your performance settings unless you know what you are doing.
 
 #CMPR
-option.CMPR=Complementary
+option.CMPR=Let it snow
 value.CMPR.0=§cReimagined
 value.CMPR.1=§eReimagined
 value.CMPR.2=§aReimagined
@@ -51,6 +51,8 @@ screen.WAVING_SETTINGS.comment=Settings that are about waving blocks.
 
 screen.OTHER_SETTINGS=Other
 screen.OTHER_SETTINGS.comment=Settings that don't fit into any other category.
+
+screen.SNOW_SETTINGS=Snow Settings
 
 #Settings
 option.RP_MODE=RP Support
@@ -336,3 +338,14 @@ value.SELECTION_OUTLINE.5=§aBlue
 value.SELECTION_OUTLINE.6=§aYellow
 value.SELECTION_OUTLINE.7=§aCyan
 value.SELECTION_OUTLINE.8=§aMagenta
+
+#Snowimagined
+
+option.SNOW_NOISE_TYPE=Snow noise
+option.SNOW_NOISE_TYPE.comment=Select between the noise types.
+value.SNOW_NOISE_TYPE.0=Pixelated
+value.SNOW_NOISE_TYPE.1=Non-Pixelated
+option.SNOW_NOISE_INTENSITY=Noise Intensity
+option.SNOW_NOISE_INTENSITY.comment=Change how strong the snow noise is.
+option.SNOW_SIZE=Snow Resolution
+option.SNOW_SIZE.comment=Change the resolution or size of the noise.

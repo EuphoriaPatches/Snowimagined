@@ -14,6 +14,7 @@ in vec2 texCoord;
 in vec2 lmCoord;
 in vec2 signMidCoordPos;
 flat in vec2 absMidCoordPos;
+in vec3 midUV;
 
 flat in vec3 upVec, sunVec, northVec, eastVec;
 in vec3 normal;
@@ -43,10 +44,7 @@ uniform mat4 shadowModelView;
 uniform mat4 shadowProjection;
 
 uniform sampler2D texture;
-
-#if defined NETHER || RAIN_PUDDLES >= 1 || defined COATED_TEXTURES
-	uniform sampler2D noisetex;
-#endif
+uniform sampler2D noisetex;
 
 #if RAIN_PUDDLES >= 1
 	uniform float wetness;
@@ -155,6 +153,10 @@ void main() {
 		float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 1.0;
 		vec2 lmCoordM = lmCoord;
 		vec3 shadowMult = vec3(1.0);
+
+		float snowIntensity = 1.0;
+		float snowTransparentOverwrite = 0.0;
+
 		#ifdef IPBR
 			#include "/lib/materials/terrainMaterials.glsl"
 
@@ -175,13 +177,18 @@ void main() {
 			} else if (mat == 10012) { // Vine
 				#include "/lib/materials/specificMaterials/leaves.glsl"
 				shadowMult = vec3(1.2);
-			} else if (mat == 10016) { // Non-waving Foliage
+			} else if (mat == 10016 || mat == 10017) { // Non-waving Foliage
 				subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 			} else if (mat == 10020) { // Upper Waving Foliage
 				subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 			}
 
 			else if (lmCoord.x > 0.99999) lmCoordM.x = 0.95;
+		#endif
+
+		#include "/lib/materials/snowMode.glsl"
+		#ifdef IPBR
+			smoothnessD = mix(smoothnessD, smoothnessG, snowVariable);
 		#endif
 
 		#if RAIN_PUDDLES >= 1
@@ -274,6 +281,7 @@ out vec2 texCoord;
 out vec2 lmCoord;
 out vec2 signMidCoordPos;
 flat out vec2 absMidCoordPos;
+out vec3 midUV; //useful to hardcode something to a specific pixel coordinate of a block
 
 flat out vec3 upVec, sunVec, northVec, eastVec;
 out vec3 normal;
@@ -300,6 +308,7 @@ out vec4 glColor;
 //Attributes//
 attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
+attribute vec3 at_midBlock;
 
 #if RAIN_PUDDLES >= 1 || defined GENERATED_NORMALS
 	attribute vec4 at_tangent;
@@ -322,6 +331,7 @@ attribute vec4 mc_midTexCoord;
 void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	lmCoord  = GetLightMapCoordinates();
+	midUV = 0.5 - at_midBlock / 64.0;
 
 	glColor = gl_Color;
 	if (glColor.a < 0.1) glColor.a = 1.0;

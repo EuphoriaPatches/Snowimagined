@@ -11,19 +11,21 @@
 in vec2 texCoord;
 in vec2 lmCoord;
 
+flat in int mat;
+
 flat in vec3 upVec, sunVec, northVec, eastVec;
 in vec3 normal;
 
 in vec4 glColor;
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES
-	in vec2 signMidCoordPos;
-	flat in vec2 absMidCoordPos;
-#endif
+in vec2 signMidCoordPos;
+flat in vec2 absMidCoordPos;
 
 #ifdef GENERATED_NORMALS
 	flat in vec3 binormal, tangent;
 #endif
+
+in vec3 midUV;
 
 //Uniforms//
 uniform int isEyeInWater;
@@ -50,9 +52,7 @@ uniform sampler2D texture;
 	uniform ivec2 atlasSize;
 #endif
 
-#ifdef COATED_TEXTURES
-	uniform sampler2D noisetex;
-#endif
+uniform sampler2D noisetex;
 
 #ifdef CLOUD_SHADOWS
 	uniform sampler2D gaux3;
@@ -116,6 +116,9 @@ void main() {
 	float lViewPos = length(viewPos);
 	vec3 playerPos = ViewToPlayer(viewPos);
 
+	float snowIntensity = 1.0;
+	float snowTransparentOverwrite = 0.0;
+
 	bool noSmoothLighting = false, noDirectionalShading = false;
 	float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, materialMask = 0.0, noiseFactor = 1.0;
 	vec2 lmCoordM = lmCoord;
@@ -134,6 +137,8 @@ void main() {
 			noSmoothLighting = true;
 		}
 	#endif
+
+	#include "/lib/materials/snowMode.glsl"
 
 	#ifdef GENERATED_NORMALS
 		GenerateNormals(normalM, colorP);
@@ -160,15 +165,17 @@ void main() {
 out vec2 texCoord;
 out vec2 lmCoord;
 
+flat out int mat;
+
 flat out vec3 upVec, sunVec, northVec, eastVec;
 out vec3 normal;
 
 out vec4 glColor;
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES
-	out vec2 signMidCoordPos;
-	flat out vec2 absMidCoordPos;
-#endif
+out vec3 midUV; //useful to hardcode something to a specific pixel coordinate of a block
+
+out vec2 signMidCoordPos;
+flat out vec2 absMidCoordPos;
 
 #ifdef GENERATED_NORMALS
 	flat out vec3 binormal, tangent;
@@ -196,6 +203,8 @@ out vec4 glColor;
 	attribute vec4 at_tangent;
 #endif
 
+attribute vec3 at_midBlock;
+
 //Common Variables//
 
 //Common Functions//
@@ -217,6 +226,8 @@ void main() {
 	lmCoord  = GetLightMapCoordinates();
 
 	glColor = gl_Color;
+
+	midUV = 0.5 - at_midBlock / 64.0;
 
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 

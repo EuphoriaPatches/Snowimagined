@@ -11,7 +11,7 @@ vec3 GetWave(in vec3 pos, float waveSpeed) {
     wave.y = sin(wind*0.0015 + d2 + d0 + pos.z + pos.y - pos.y) * magnitude;
 
     #ifdef NO_WAVING_INDOORS
-        wave *= max0(lmCoord.y - 0.9);
+        wave *= clamp(lmCoord.y - 0.87, 0.0, 0.1);
     #else
         wave *= 0.1;
     #endif
@@ -49,7 +49,7 @@ void DoWave(inout vec3 playerPos, int mat) {
     vec3 worldPos = playerPos.xyz + cameraPosition.xyz;
 
     #ifdef WAVING_FOLIAGE
-        if (mat == 10004) { // Grounded Waving Foliage
+        if (mat == 10004 || mat == 10005) { // Grounded Waving Foliage
             DoWave_GroundedFoliage(playerPos.xyz, worldPos);
         } else if (mat == 10020) { // Upper Layer Waving Foliage
             DoWave_Foliage(playerPos.xyz, worldPos);

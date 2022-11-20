@@ -173,7 +173,7 @@ void main() {
 	#endif
 
 	#ifdef PERPENDICULAR_TWEAKS
-		if (mat == 10004 || mat == 10016) {
+		if (mat == 10004 || mat == 10005 || mat == 10016 || mat == 10017) {
 			vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
 			vec2 texMinMidCoord = texCoord - midCoord;
 			if (texMinMidCoord.y < 0.0) {

@@ -73,6 +73,12 @@
     #define WAVING_FOLIAGE
     //#define WAVING_LEAVES
 
+// Snowimagined
+
+    #define SNOW_SIZE 16 //[16 32 64 128]
+    #define SNOW_NOISE_TYPE 0 //[0 1] pixel-locked or not
+    #define SNOW_NOISE_INTENSITY 1.0 //[0.5 0.75 1.0 1.25 1.5 2.0]
+
 //Internal Settings//
 
     #if RP_MODE >= 1 && REFLECTION_QUALITY >= 3
@@ -394,5 +400,18 @@
     float smoothstep1(float x) {
         return x * x * (3.0 - 2.0 * x);
     }
+
+    #define UI0 1597334673U
+    #define UI1 3812015801U
+    #define UI3 uvec3(UI0, UI1, 2798796415U)
+    #define UIF (1.0 / float(0xffffffffU))
+
+    vec3 hash33(const in uvec3 p) {
+        uvec3 q = p * UI3;
+        q = (q.x ^ q.y ^ q.z) * UI3;
+    return -1.0 + 2.0 * vec3(q) * UIF;
+    }
+
+    vec3 hash33(const in vec3 p) {return hash33(uvec3(p));}
 
 // 62 75 74 20 74 68 4F 73 65 20 77 68 6F 20 68 6F 70 65 20 69 6E 20 74 68 65 20 6C 69 6D 69 4E 61 6C 0A 77 69 6C 6C 20 72 65 6E 65 77 20 74 68 65 69 72 20 73 54 72 65 6E 67 74 48 2E 0A 74 68 65 79 20 77 69 6C 6C 20 73 6F 41 72 20 6F 6E 20 65 6C 79 54 72 61 73 20 6C 69 6B 65 20 70 68 61 6E 74 6F 6D 73 3B 0A 74 68 65 79 20 77 69 6C 6C 20 72 75 6E 20 61 6E 44 20 6E 6F 74 20 67 72 6F 77 20 77 65 41 72 79 2C 0A 74 68 65 59 20 77 69 6C 6C 20 77 61 6C 6B 20 61 6E 64 20 6E 6F 74 20 62 65 20 66 61 69 6E 74 2E
