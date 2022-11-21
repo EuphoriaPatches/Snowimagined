@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/46494907/202925242-f2f24b62-9f3c-4e51-8eec-f47aea11649d.png" alt="Snowimagined_logo" width="100" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/203031082-358d5c60-a354-483a-94a3-44ae33409bfe.png" alt="Snowimagined_logo" width="100" height="auto" />
   <h1>Snowimagined Shaders</h1>
   
   A [Complementary Reimagined](https://www.complementary.dev/reimagined/) edit 
@@ -21,3 +21,20 @@
 <img src="https://user-images.githubusercontent.com/46494907/202925163-c2ef6b20-6182-4f91-a66a-3b05cc0b7d5d.png" width="500" height="auto" />
 <img src="https://user-images.githubusercontent.com/46494907/202925404-93c3a2b5-a700-467d-98d5-a137635c0bbb.png" width="500" height="auto" />
 <img src="https://user-images.githubusercontent.com/46494907/202925641-7cb03171-c8f9-406f-8dcf-ef902c39884e.png" width="500" height="auto" />
+
+## Features
+<details><summary>Click to Expand</summary>
+<p>
+
+* Snow works on all blocks including block entities like chests or player heads and translucent blocks like stained glass or ice
+* Emission of emissive blocks is reduced if snow is on top
+* Transparency of translucent blocks is reduced when snow is on top
+* Snow doesn't generate if near a light source or if under blocks (it still generates below blocks like glass, unfortunately not fixable)
+* The noise of snow can be configured to be either pixel-locked or non-pixel-locked, by default it is locked to the pixel grid
+* The resolution or noise size can be configured. Options are 16x, 32x, 64x and 128x. Default is 16x
+* An option to change the snow noise intensity exists wich makes the noise more or less apparent
+* Snow has Integrated PBR properties, light can reflect on it
+* On the sides of mycelium, path and grass blocks snow is also with a gradient generated 
+  
+</p>
+</details>
