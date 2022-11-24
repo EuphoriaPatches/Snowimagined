@@ -34,7 +34,7 @@ snowVariable *= clamp(2.0 * snowRemoveNoise1 + 0.70 * snowRemoveNoise2 + 0.2 * s
 // light check
 snowVariable = clamp(snowVariable, 0.0, 1.0); // to prevent stuff breaking, like the fucking bamboo sapling!!!!
 snowVariable *= (1.0 - pow(lmCoord.x, 2.5) * 4.3) * pow(lmCoord.y, 14.0); // first part to turn off at light sources, second part to turn off if under blocks
-snowVariable = clamp(snowVariable, 0.0, 0.9); // to prevent artifacts near light sources
+snowVariable = clamp(snowVariable, 0.0, SNOW_TRANSPARENCY * 0.1 + 0.8); // to prevent artifacts near light sources
 
 // Biome Color Desaturation. Currently causes problems in water
 // color.rgb = mix(color.rgb * (GetLuminance(color.rgb) / color.rgb), color.rgb, 0.7);
