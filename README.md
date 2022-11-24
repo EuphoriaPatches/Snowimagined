@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/46494907/182962685-cb624c8b-782a-4d51-b9e5-090267ae6624.png" alt="Snowimagined_logo" width="100" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/203031082-358d5c60-a354-483a-94a3-44ae33409bfe.png" alt="Snowimagined_logo" width="100" height="auto" />
   <h1>Snowimagined Shaders</h1>
   
   A [Complementary Reimagined](https://www.complementary.dev/reimagined/) edit 
@@ -11,11 +11,30 @@
 
 ## What is Snowimagined Shaders?
 
-Snowimagined Shaders, by SpacEagle17 and isuewo, is an edit of EminGT's Complementary Reimagined Shaders. It transforms your game into a beautiful winter wonderland.
+* Snowimagined Shaders, by SpacEagle17 and isuewo, is an edit of EminGT's Complementary Reimagined Shaders. It transforms your game into a beautiful winter wonderland.
 
 ## Screenshots
 
-<img src="https://user-images.githubusercontent.com/46494907/182963116-0998fbc9-cd68-4912-9e41-31c3a1de7d3d.png" width="500" height="auto" />
-<img src="https://user-images.githubusercontent.com/46494907/182963134-d613b400-69df-4e8b-94c1-908a49b8b9c5.png" width="500" height="auto" />
-<img src="https://user-images.githubusercontent.com/46494907/182963710-179de3c1-7ef4-4eb6-a495-c7051bbdb38f.png" width="500" height="auto" />
-<img src="https://user-images.githubusercontent.com/46494907/182964341-dc1dc1ae-cc6d-46bb-a274-54384d6668fc.png" width="500" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/202925026-9edd82ff-6670-4c2d-8c45-cc031d9b073e.png" width="500" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/202925126-8cbe1ded-c6a9-411d-9791-ea7e868b27bb.png" width="500" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/202925138-dd164556-8144-46c7-9f11-6cffad10ab36.png" width="500" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/202925163-c2ef6b20-6182-4f91-a66a-3b05cc0b7d5d.png" width="500" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/202925404-93c3a2b5-a700-467d-98d5-a137635c0bbb.png" width="500" height="auto" />
+<img src="https://user-images.githubusercontent.com/46494907/202925641-7cb03171-c8f9-406f-8dcf-ef902c39884e.png" width="500" height="auto" />
+
+## Features
+<details><summary>Click to Expand</summary>
+<p>
+
+* Snow works on all blocks including block entities like chests or player heads and translucent blocks like stained glass or ice
+* Emission of emissive blocks is reduced if snow is on top
+* Transparency of translucent blocks is reduced when snow is on top
+* Snow doesn't generate if near a light source or if under blocks (it still generates below blocks like glass, unfortunately not fixable)
+* The noise of snow can be configured to be either pixel-locked or non-pixel-locked, by default it is locked to the pixel grid
+* The resolution or noise size can be configured. Options are 16x, 32x, 64x and 128x. Default is 16x
+* An option to change the snow noise intensity exists wich makes the noise more or less apparent
+* Snow has Integrated PBR properties, light can reflect on it
+* On the sides of mycelium, path and grass blocks snow is also with a gradient generated 
+  
+</p>
+</details>
