@@ -2,9 +2,9 @@ float snowVariable = 0.0;
 float upGradient = abs(clamp(dot(normal, upVec), 0.0, 1.0));
 
 // Color Desaturation
-#if COLOR_DESATURATION > 0.0
+if (COLOR_DESATURATION > 0.0) {
 	color.rgb = clamp(mix(color.rgb, color.rgb * (GetLuminance(color.rgb) / color.rgb), clamp01(COLOR_DESATURATION - lmCoord.x)), 0.0, 1.0);
-#endif
+}
 
 // specific materials
 if (mat == 10000 || mat == 10004 || mat == 10020 || mat == 10348 || mat == 10628 || mat == 10472) snowVariable = mix(1.0, 0.0, (color.r + color.g + color.b) * 0.3); // vegetation check
