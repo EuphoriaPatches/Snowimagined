@@ -1,10 +1,14 @@
 float snowVariable = 0.0;
 float upGradient = abs(clamp(dot(normal, upVec), 0.0, 1.0));
+vec3 desaturateColor = color.rgb;
 
 // Color Desaturation
 if (COLOR_DESATURATION > 0.0) {
-	color.rgb = clamp(mix(color.rgb, color.rgb * (GetLuminance(color.rgb) / color.rgb), clamp01(COLOR_DESATURATION - lmCoord.x)), 0.0, 1.0);
+	desaturateColor = clamp(mix(color.rgb, color.rgb * (GetLuminance(color.rgb) / color.rgb), clamp01(COLOR_DESATURATION - lmCoord.x)), 0.0, 1.0);
 }
+
+vec3 winterColor = desaturateColor;
+float winterAlpha = color.a;
 
 // specific materials
 if (mat == 10000 || mat == 10004 || mat == 10020 || mat == 10348 || mat == 10628 || mat == 10472) snowVariable = mix(1.0, 0.0, (color.r + color.g + color.b) * 0.3); // vegetation check
@@ -23,13 +27,10 @@ if (snowVariable > 0.0) {
 	
 	// snow noise
 	vec3 worldPos = playerPos + cameraPosition;
-	#if SNOW_NOISE_TYPE == 0
-		// /*Please don't remove.*/ float snowNoise = texture2D(noisetex, floor(worldPos.xz * SNOW_SIZE + 0.03 + floor(worldPos.y * SNOW_SIZE + 0.01)) / SNOW_SIZE - normalize(cameraPosition.xz) - normalize(cameraPosition.y) + 0.5 / SNOW_SIZE).r; // pixel-locked noise based on the noise texture.
-		float snowNoise = float(hash33(floor(mod(worldPos, vec3(100.0)) * SNOW_SIZE + 0.03) * SNOW_SIZE)) * 0.25; // pixel-locked procedural noise
-		snowColor *= 1.1;
-	#else
-		float snowNoise = texture2D(noisetex, signMidCoordPos * 0.008 * SNOW_SIZE).r; // non-pixel-locked noise
-	#endif
+
+	float snowNoise = float(hash33(floor(mod(worldPos, vec3(100.0)) * SNOW_SIZE + 0.03) * SNOW_SIZE)) * 0.25; // pixel-locked procedural noise
+
+	snowColor *= 1.1;
 	snowColor += 0.13 * snowNoise * SNOW_NOISE_INTENSITY; // make the noise less noticeable & configurable with option
 
 	float snowRemoveNoise1 = 1.0 - texture2D(noisetex, 0.0005 * (worldPos.xz + worldPos.y)).r;
@@ -43,11 +44,6 @@ if (snowVariable > 0.0) {
 	snowVariable = clamp(snowVariable, 0.0, SNOW_TRANSPARENCY * 0.1 + 0.8); // to prevent artifacts near light sources
 
 	// final mix
-	color.rgb = mix(color.rgb, snowColor, snowVariable * snowIntensity);
-	color.a = mix(color.a, 1.0, snowTransparentOverwrite * snowVariable);
-
-	#ifdef IPBR
-		smoothnessG = mix(smoothnessG,(1.0 - pow(color.g, 64.0) * 0.3) * 0.3, snowVariable); // values taken from snow.glsl
-		highlightMult = mix(highlightMult, 2.0, snowVariable);
-	#endif
+	winterColor = mix(desaturateColor, snowColor, snowVariable * snowIntensity);
+	winterAlpha = mix(color.a, 1.0, snowTransparentOverwrite * snowVariable);
 }

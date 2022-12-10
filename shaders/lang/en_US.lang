@@ -341,11 +341,6 @@ value.SELECTION_OUTLINE.8=§aMagenta
 
 #Snowimagined
 
-option.SNOW_NOISE_TYPE=Snow noise
-option.SNOW_NOISE_TYPE.comment=Select between the noise types.
-value.SNOW_NOISE_TYPE.0=Pixelated
-value.SNOW_NOISE_TYPE.1=Non-Pixelated
-
 option.SNOW_NOISE_INTENSITY=Noise Intensity
 option.SNOW_NOISE_INTENSITY.comment=Change how strong the snow noise is.
 

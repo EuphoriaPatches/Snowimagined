@@ -30,7 +30,6 @@
 * Emission of emissive blocks is reduced if snow is on top
 * Transparency of translucent blocks is reduced when snow is on top
 * Snow doesn't generate if near a light source or if under blocks (it still generates below blocks like glass, unfortunately not fixable)
-* The noise of snow can be configured to be either pixel-locked or non-pixel-locked, by default it is locked to the pixel grid
 * The resolution or noise size can be configured. Options are 16x, 32x, 64x and 128x. Default is 16x
 * An option to change the snow noise intensity exists which makes the noise more or less apparent
 * Snow has Integrated PBR properties, light can reflect on it

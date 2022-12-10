@@ -218,7 +218,13 @@ void main() {
 	#endif
 
 	#include "/lib/materials/snowMode.glsl"
+	color.rgb = winterColor;
+	color.a = winterAlpha;
 	fresnel = mix(fresnel, 0.01, snowVariable * snowFresnelMult);
+	#ifdef IPBR
+		smoothnessG = mix(smoothnessG,(1.0 - pow(color.g, 64.0) * 0.3) * 0.3, snowVariable); // values taken from snow.glsl
+		highlightMult = mix(highlightMult, 2.0, snowVariable);
+	#endif
 
 	// Blending
 	if (!translucentMultAlreadyCalculated) {

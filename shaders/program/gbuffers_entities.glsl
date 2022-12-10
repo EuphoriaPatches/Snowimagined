@@ -16,6 +16,10 @@ in vec3 normal;
 
 in vec4 glColor;
 
+flat in int mat;
+
+in vec3 midUV;
+
 //Uniforms//
 uniform int isEyeInWater;
 uniform int entityId;
@@ -40,6 +44,7 @@ uniform mat4 shadowModelView;
 uniform mat4 shadowProjection;
 
 uniform sampler2D texture;
+uniform sampler2D noisetex;
 
 #ifdef CLOUD_SHADOWS
 	uniform sampler2D gaux3;
@@ -75,14 +80,20 @@ void main() {
 	vec4 color = texture2D(texture, texCoord);
 	color *= glColor;
 
-	color.rgb = mix(color.rgb, entityColor.rgb, entityColor.a);
-
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 	vec3 viewPos = ScreenToView(screenPos);
 	vec3 nViewPos = normalize(viewPos);
 	vec3 playerPos = ViewToPlayer(viewPos);
 	float lViewPos = length(viewPos);
 	float VdotN = dot(nViewPos, normal);
+
+	float snowIntensity = 1.0;
+	float snowTransparentOverwrite = 0.0;
+
+	#include "/lib/materials/snowMode.glsl"
+	color.rgb = desaturateColor;
+
+	color.rgb = mix(color.rgb, entityColor.rgb, entityColor.a);
 
 	bool noSmoothLighting = atlasSize.x < 600.0; // To fix fire looking too dim
 	float materialMask = OSIEBCA * 4.0; // No SSAO, No TAA
@@ -120,6 +131,10 @@ out vec3 normal;
 
 out vec4 glColor;
 
+flat out int mat;
+
+out vec3 midUV; //useful to hardcode something to a specific pixel coordinate of a block
+
 //Uniforms//
 #ifdef FLICKERING_FIX
 	uniform int entityId;
@@ -130,6 +145,7 @@ out vec4 glColor;
 #endif
 
 //Attributes//
+attribute vec3 at_midBlock;
 
 //Common Variables//
 
@@ -144,6 +160,8 @@ void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
 	lmCoord  = GetLightMapCoordinates();
+
+	midUV = 0.5 - at_midBlock / 64.0;
 
 	glColor = gl_Color;
 
