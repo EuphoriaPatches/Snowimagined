@@ -1,10 +1,12 @@
 float snowVariable = 0.0;
 float upGradient = abs(clamp(dot(normal, upVec), 0.0, 1.0));
 vec3 desaturateColor = color.rgb;
+float snowDesaturation = COLOR_DESATURATION;
 
 // Color Desaturation
 if (COLOR_DESATURATION > 0.0) {
-	desaturateColor = clamp(mix(color.rgb, color.rgb * (GetLuminance(color.rgb) / color.rgb), clamp01(COLOR_DESATURATION - lmCoord.x)), 0.0, 1.0);
+	if (isEyeInWater != 0) snowDesaturation = COLOR_DESATURATION * 0.5;
+	desaturateColor = clamp(mix(color.rgb, color.rgb * (GetLuminance(color.rgb) / color.rgb), clamp01(snowDesaturation - lmCoord.x)), 0.0, 1.0);
 }
 
 vec3 winterColor = desaturateColor;
