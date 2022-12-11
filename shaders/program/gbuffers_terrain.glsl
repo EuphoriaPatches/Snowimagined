@@ -156,6 +156,7 @@ void main() {
 
 		float snowIntensity = 1.0;
 		float snowTransparentOverwrite = 0.0;
+		float snowEmission = 1.0;
 
 		#ifdef IPBR
 			#include "/lib/materials/terrainMaterials.glsl"
@@ -187,13 +188,6 @@ void main() {
 		#endif
 
 		#include "/lib/materials/snowMode.glsl"
-		color.rgb = winterColor;
-		color.a = winterAlpha;
-		#ifdef IPBR
-			smoothnessG = mix(smoothnessG,(1.0 - pow(color.g, 64.0) * 0.3) * 0.3, snowVariable); // values taken from snow.glsl
-			highlightMult = mix(highlightMult, 2.0, snowVariable);
-			smoothnessD = mix(smoothnessD, smoothnessG, snowVariable);
-		#endif
 
 		#if RAIN_PUDDLES >= 1
 			float puddleLightFactor = max0(lmCoord.y * 32.0 - 31.0) * clamp((1.0 - 1.15 * lmCoord.x) * 10.0, 0.0, 1.0);

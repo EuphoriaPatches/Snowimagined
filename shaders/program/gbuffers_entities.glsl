@@ -91,7 +91,6 @@ void main() {
 	float snowTransparentOverwrite = 0.0;
 
 	#include "/lib/materials/snowMode.glsl"
-	color.rgb = desaturateColor;
 
 	color.rgb = mix(color.rgb, entityColor.rgb, entityColor.a);
 

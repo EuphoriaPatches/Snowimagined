@@ -24,7 +24,7 @@ if (mat == 10132 && glColor.b < 0.999) snowVariable += abs(color.g - color.g * 0
 
 snowVariable += upGradient; // normal check for top surfaces
 
-if (snowVariable > 0.0) {
+if (snowVariable > 0.001) {
 	vec3 snowColor = vec3(0.5843, 0.6314, 0.6471);
 	
 	// snow noise
@@ -32,7 +32,7 @@ if (snowVariable > 0.0) {
 
 	float snowNoise = float(hash33(floor(mod(worldPos, vec3(100.0)) * SNOW_SIZE + 0.03) * SNOW_SIZE)) * 0.25; // pixel-locked procedural noise
 
-	snowColor *= 1.1;
+	snowColor *= 1.25;
 	snowColor += 0.13 * snowNoise * SNOW_NOISE_INTENSITY; // make the noise less noticeable & configurable with option
 
 	float snowRemoveNoise1 = 1.0 - texture2D(noisetex, 0.0005 * (worldPos.xz + worldPos.y)).r;
@@ -45,7 +45,31 @@ if (snowVariable > 0.0) {
     snowVariable *= (1.0 - pow(lmCoord.x, 2.5) * 4.3) * pow(lmCoord.y, 14.0); // first part to turn off at light sources, second part to turn off if under blocks
 	snowVariable = clamp(snowVariable, 0.0, SNOW_TRANSPARENCY * 0.1 + 0.8); // to prevent artifacts near light sources
 
+	//gbuffer specific features
+		#if defined GBUFFERS_TERRAIN || defined GBUFFERS_BLOCK || defined GBUFFERS_WATER
+			#ifdef IPBR
+				smoothnessG = mix(smoothnessG,(1.0 - pow(color.g, 64.0) * 0.3) * 0.3, snowVariable); // values taken from snow.glsl
+				highlightMult = mix(highlightMult, 2.0, snowVariable);
+			#endif
+		#endif
+
+		#ifdef GBUFFERS_TERRAIN
+			if (dot(normal, upVec) > 0.99) emission *= snowEmission;
+			smoothnessD = mix(smoothnessD, smoothnessG, snowVariable);
+		#endif
+
+		#ifdef GBUFFERS_WATER
+			if (dot(normal, upVec) > 0.99) snowTransparentOverwrite = snowAlpha;
+			fresnel = mix(fresnel, 0.01, snowVariable * snowFresnelMult);
+		#endif
+
 	// final mix
 	winterColor = mix(desaturateColor, snowColor, snowVariable * snowIntensity);
-	winterAlpha = mix(color.a, 1.0, snowTransparentOverwrite * snowVariable);
+	winterAlpha = mix(color.a, 1.0, clamp(snowTransparentOverwrite * snowVariable, 0.0, 1.0));
 }
+#ifdef GBUFFERS_ENTITIES
+color.rgb = desaturateColor;
+#else
+color.rgb = winterColor;
+color.a = winterAlpha;
+#endif

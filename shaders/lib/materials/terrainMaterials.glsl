@@ -75,7 +75,7 @@ if (mat < 10512) {
                                         color.rgb *= color.rgb;
                                         emission = 8.0 * color.r;
                                         snowIntensity = 0.35;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.2;
+                                        snowEmission = 0.2;
                                     } else if (color.r > color.g * 2.0) {
                                         materialMask = OSIEBCA * 5.0; // Redstone Fresnel
 
@@ -467,7 +467,7 @@ if (mat < 10512) {
                                 } else { // Crimson Stem:Emissive Part, Crimson Hyphae:Emissive Part
                                     emission = pow2(color.r) * 4.2;
                                     snowIntensity = 0.6;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.15;
+                                    snowEmission = 0.15;
                                 }
                             }
                             else /*if (mat == 10220)*/ { // Warped Planks++:Clean Variants
@@ -485,7 +485,7 @@ if (mat < 10512) {
                                 } else { // Warped Stem:Emissive Part, Warped Hyphae:Emissive Part
                                     emission = pow2(color.g + 0.2 * color.b) * 3.4;
                                     snowIntensity = 0.7;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.3;
+                                    snowEmission = 0.3;
                                 }
                             }
                             else /*if (mat == 10228)*/ { // Bedrock
@@ -572,7 +572,7 @@ if (mat < 10512) {
                                     emission = pow2(color.g * 6.0);
                                     color.rgb *= color.rgb;
                                     snowIntensity = 0.2;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.8;
+                                    snowEmission = 0.8;
                                 #endif
                             }
                         }
@@ -614,7 +614,7 @@ if (mat < 10512) {
                                             emission = color.r * 1.5;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.6;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                            snowEmission = 0.5;
                                         }
                                     #endif
                                 } else { // Iron Ore:Stone Part
@@ -629,7 +629,7 @@ if (mat < 10512) {
                                             emission = color.r * 1.5;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.6;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                            snowEmission = 0.5;
                                         }
                                     #endif
                                 } else { // Deepslate Iron Ore:Deepslate Part
@@ -648,7 +648,7 @@ if (mat < 10512) {
                                             emission = color.r * 2.0 + 0.5;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.6;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                            snowEmission = 0.5;
                                         }
                                     #endif
                                 } else { // Copper Ore:Stone Part
@@ -668,7 +668,7 @@ if (mat < 10512) {
                                             emission = color.r * 2.0 + 0.5;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.6;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                            snowEmission = 0.5;
                                         }
                                     #endif
                                 } else { // Deepslate Copper Ore:Deepslate Part
@@ -698,7 +698,7 @@ if (mat < 10512) {
                                             emission = color.r + 1.0;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.65;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                            snowEmission = 0.6;
                                         }
                                     #endif
                                 } else { // Gold Ore:Stone Part
@@ -716,7 +716,7 @@ if (mat < 10512) {
                                             emission = color.r + 1.0;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.65;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                            snowEmission = 0.6;
                                         }
                                     #endif
                                 } else { // Deepslate Gold Ore:Deepslate Part
@@ -729,7 +729,7 @@ if (mat < 10512) {
                                     #if GLOWING_ORES >= 1
                                         emission = color.g * 1.5;
                                         snowIntensity = 0.65;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                        snowEmission = 0.6;
                                     #endif
                                 } else { // Nether Gold Ore:Netherrack Part
                                     #include "/lib/materials/specificMaterials/netherrack.glsl"
@@ -756,7 +756,7 @@ if (mat < 10512) {
                                         emission = color.g + 1.5;
                                         color.rgb *= color.rgb;
                                         snowIntensity = 0.75;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.4;
+                                        snowEmission = 0.4;
                                     #endif
                                 } else { // Diamond Ore:Stone Part, Diamond Ore:StoneToDiamond part
                                     #include "/lib/materials/specificMaterials/stone.glsl"
@@ -773,7 +773,7 @@ if (mat < 10512) {
                                         emission = color.g + 1.5;
                                         color.rgb *= color.rgb;
                                         snowIntensity = 0.75;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.4;
+                                        snowEmission = 0.4;
                                     #endif
                                 }
                             }
@@ -824,7 +824,7 @@ if (mat < 10512) {
                                             emission = 2.0;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.7;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.3;
+                                            snowEmission = 0.3;
                                         }
                                     #endif
                                 } else { // Emerald Ore:Stone Part
@@ -840,7 +840,7 @@ if (mat < 10512) {
                                             emission = 2.0;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.7;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.3;
+                                            snowEmission = 0.3;
                                         }
                                     #endif
                                 } else { // Deepslate Emerald Ore:Deepslate Part
@@ -869,7 +869,7 @@ if (mat < 10512) {
                                             emission = 2.0;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.65;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                            snowEmission = 0.6;
                                         }
                                     #endif
                                 } else { // Lapis Ore:Stone Part
@@ -887,7 +887,7 @@ if (mat < 10512) {
                                             emission = 2.0;
                                             color.rgb *= color.rgb;
                                             snowIntensity = 0.65;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                            snowEmission = 0.6;
                                         }
                                     #endif
                                 } else { // Deepslate Lapis Ore:Deepslate Part
@@ -1176,7 +1176,7 @@ if (mat < 10512) {
                                     #if GLOWING_ORES >= 2
                                         emission = color.g * 1.5;
                                         snowIntensity = 0.65;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                        snowEmission = 0.6;
                                     #endif
                                 } else { // Gilded Blackstone:Blackstone Part
                                     #include "/lib/materials/specificMaterials/blackstone.glsl"
@@ -1236,7 +1236,7 @@ if (mat < 10512) {
                                 if (dotColor > 1.0)
                                     emission = pow2(pow2(pow2(dotColor * 0.33))) + 0.2 * dotColor;
                                     snowIntensity = 0.5;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                    snowEmission = 0.6;
                             }
                         }
                     }
@@ -1256,7 +1256,7 @@ if (mat < 10512) {
                                     emission = 12.0;
                                     color.rgb *= color.rgb * dot(color.rgb, color.rgb) * vec3(0.4, 0.35, 0.4);
                                     snowIntensity = 0.1;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.8;
+                                    snowEmission = 0.8;
                                 }
                                 /*vec2 coordM = abs((floor((signMidCoordPos + 1.0) * 6.0) + 0.5) - 6.0);
                                 
@@ -1401,7 +1401,7 @@ if (mat < 10512) {
                                         smoothnessD = 0.5;
                                         emission = pow2(min(color.g, 0.25)) * 150.0 * (0.27 - maxCoord);
                                         snowIntensity = 0.65;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                        snowEmission = 0.6;
                                     } else {
                                         float minCoord = min(absCoord.x, absCoord.y);
                                         if (CheckForColor(color.rgb, vec3(153, 198, 147))
@@ -1409,7 +1409,7 @@ if (mat < 10512) {
                                             emission = 1.5;
                                             color.rgb = vec3(0.4, 1.0, 0.5);
                                             snowIntensity = 0.65;
-                                            if (dot(normal, upVec) > 0.99) emission *= 0.6;
+                                            snowEmission = 0.6;
                                         }
                                     }
                                 }
@@ -1545,7 +1545,7 @@ if (mat < 10512) {
                                         emission = pow2(color.r) * color.r * 4.0;
                                         color.gb *= 0.1;
                                         snowIntensity = 0.5;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                        snowEmission = 0.5;
                                     #endif
                                 } else { // Redstone Ore:Unlit:Stone Part
                                     #include "/lib/materials/specificMaterials/stone.glsl"
@@ -1558,7 +1558,7 @@ if (mat < 10512) {
                                     emission = pow2(pow2(color.r)) * 6.0;
                                     color.gb *= 0.05;
                                     snowIntensity = 0.5;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                    snowEmission = 0.5;
                                 } else { // Redstone Ore:Lit:Stone Part
                                     #include "/lib/materials/specificMaterials/stone.glsl"
                                 }
@@ -1571,7 +1571,7 @@ if (mat < 10512) {
                                         emission = pow2(color.r) * color.r * 4.0;
                                         color.gb *= 0.1;
                                         snowIntensity = 0.5;
-                                        if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                        snowEmission = 0.5;
                                     #endif
                                 } else { // Deepslate Redstone Ore:Unlit:Deepslate Part
                                     #include "/lib/materials/specificMaterials/deepslate.glsl"
@@ -1586,7 +1586,7 @@ if (mat < 10512) {
                                     emission = pow2(pow2(color.r)) * 6.0;
                                     color.gb *= 0.05;
                                     snowIntensity = 0.5;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.5;
+                                    snowEmission = 0.5;
                                 } else { // Deepslate Redstone Ore:Lit:Deepslate Part
                                     #include "/lib/materials/specificMaterials/deepslate.glsl"
                                 }
@@ -1646,7 +1646,7 @@ if (mat < 10512) {
 
                                     #include "/lib/materials/specificMaterials/redstoneTorch.glsl"
                                     snowIntensity = 0.7;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.2;
+                                    snowEmission = 0.2;
                                 } else { // Quartz Base
                                     float factor = pow2(color.g) * 0.6;
 
@@ -1704,7 +1704,7 @@ if (mat < 10512) {
                                 if (color.r > 0.1 && color.g + color.b < 0.1) {
                                     #include "/lib/materials/specificMaterials/redstoneTorch.glsl"
                                     snowIntensity = 0.7;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.15;
+                                    snowEmission = 0.15;
                                 } else {
                                     #include "/lib/materials/specificMaterials/cobblestone.glsl"
                                 }
@@ -1824,7 +1824,7 @@ if (mat < 10512) {
 
                                 emission = 7.0 * float(CheckForColor(color.rgb, vec3(110, 4, 83)));
                                 snowIntensity = 0.6;
-                                if (dot(normal, upVec) > 0.99) emission *= 0.15;
+                                snowEmission = 0.15;
                             }
                         } else {
                             if (mat == 10712) { // Tuff
@@ -1863,7 +1863,7 @@ if (mat < 10512) {
                                     color.rgb *= color.rgb;
                                     emission = 4.0;
                                     snowIntensity = 0.1;
-                                    if (dot(normal, upVec) > 0.99) emission *= 0.3;
+                                    snowEmission = 0.3;
                                 } else {
                                     #include "/lib/materials/specificMaterials/cobblestone.glsl"
                                 }
@@ -1881,7 +1881,7 @@ if (mat < 10512) {
                                 emission = 5.0 * lBlockPosM;
                                 color.rgb = pow2(color.rgb);
                                 snowIntensity = 0.45;
-                                if (dot(normal, upVec) > 0.99) emission *= 0.2;
+                                snowEmission = 0.2;
                             }
                             else /*if (mat == 10740)*/ { //
 
