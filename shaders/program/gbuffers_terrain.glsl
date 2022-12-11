@@ -157,6 +157,7 @@ void main() {
 		float snowIntensity = 1.0;
 		float snowTransparentOverwrite = 0.0;
 		float snowEmission = 1.0;
+		float IPBRMult = 1.0;
 
 		#ifdef IPBR
 			#include "/lib/materials/terrainMaterials.glsl"

@@ -176,6 +176,7 @@ void main() {
 	float snowTransparentOverwrite = 0.0;
 	float snowAlpha = 1.0;
 	float snowFresnelMult = 1.0;
+	float IPBRMult = 1.0;
 
 	#if defined OVERWORLD && CLOUD_QUALITY > 0
 		float cloudLinearDepth = texelFetch(gaux1, texelCoord, 0).r;
@@ -212,6 +213,8 @@ void main() {
 			#include "/lib/materials/specificMaterials/translucents/water.glsl"
 			snowIntensity = 0.0;
 			snowFresnelMult = 0.0;
+			snowAlpha = 0.0;
+			IPBRMult = 0.0;
 		} else {
 			fresnel *= 0.7;
 			snowTransparentOverwrite = 0.95;

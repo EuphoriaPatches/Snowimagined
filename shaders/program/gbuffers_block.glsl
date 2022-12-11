@@ -118,6 +118,7 @@ void main() {
 
 	float snowIntensity = 1.0;
 	float snowTransparentOverwrite = 0.0;
+	float IPBRMult = 1.0;
 
 	bool noSmoothLighting = false, noDirectionalShading = false;
 	float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, materialMask = 0.0, noiseFactor = 1.0;

@@ -44,6 +44,8 @@ if (mat < 31008) {
                 #include "/lib/materials/specificMaterials/translucents/water.glsl"
                 snowIntensity = 0.0;
                 snowFresnelMult = 0.0;
+                snowAlpha = 0.0;
+                IPBRMult = 0.0;
             } else /*if (mat == 31004)*/ { // Ice
                 smoothnessG = pow2(color.g) * color.g;
                 highlightMult = pow2(min1(pow2(color.g) * 1.5)) * 3.5;

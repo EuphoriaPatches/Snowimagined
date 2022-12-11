@@ -10,6 +10,7 @@ if (COLOR_DESATURATION > 0.0) {
 vec3 winterColor = desaturateColor;
 float winterAlpha = color.a;
 
+#ifndef GBUFFERS_ENTITIES
 // specific materials
 if (mat == 10000 || mat == 10004 || mat == 10020 || mat == 10348 || mat == 10628 || mat == 10472) snowVariable = mix(1.0, 0.0, (color.r + color.g + color.b) * 0.3); // vegetation check
 if (mat == 10492 || mat == 10006) snowVariable = mix(1.0, 0.0, (color.r + color.g + color.b) * 0.1 - 1.0); // fungus and mushroom
@@ -44,11 +45,9 @@ if (snowVariable > 0.001) {
 	snowVariable = clamp(snowVariable, 0.0, SNOW_TRANSPARENCY * 0.1 + 0.8); // to prevent artifacts near light sources
 
 	//gbuffer specific features
-		#if defined GBUFFERS_TERRAIN || defined GBUFFERS_BLOCK || defined GBUFFERS_WATER
-			#ifdef IPBR
-				smoothnessG = mix(smoothnessG,(1.0 - pow(color.g, 64.0) * 0.3) * 0.3, snowVariable); // values taken from snow.glsl
-				highlightMult = mix(highlightMult, 2.0, snowVariable);
-			#endif
+		#ifdef IPBR
+			smoothnessG = mix(smoothnessG,(1.0 - pow(color.g, 64.0) * 0.3) * 0.3, snowVariable * IPBRMult); // values taken from snow.glsl
+			highlightMult = mix(highlightMult, 2.0, snowVariable * IPBRMult);
 		#endif
 
 		#ifdef GBUFFERS_TERRAIN
@@ -65,6 +64,7 @@ if (snowVariable > 0.001) {
 	winterColor = mix(desaturateColor, snowColor, snowVariable * snowIntensity);
 	winterAlpha = mix(color.a, 1.0, clamp(snowTransparentOverwrite * snowVariable, 0.0, 1.0));
 }
+#endif
 #ifdef GBUFFERS_ENTITIES
 color.rgb = desaturateColor;
 #else
