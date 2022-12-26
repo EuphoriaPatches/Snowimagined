@@ -352,3 +352,6 @@ option.SNOW_TRANSPARENCY.comment=Change the transparency of the snow.
 
 option.COLOR_DESATURATION=Color Desaturation
 option.COLOR_DESATURATION.commnet=Desaturates the colors of the environment.
+
+option.MELTING_RADIUS=Meting Radius
+option.MELTING_RADIUS.comment=Change the radius snow melts around light sources.

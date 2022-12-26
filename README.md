@@ -35,6 +35,7 @@
 * Snow has Integrated PBR properties, light can reflect on it
 * On the sides of mycelium, path and grass blocks snow is also with a gradient generated
 * The user can change the transparency of the snow in the settings
+* The melting radius around light sources can be changed
 * Snow desaturates the colors of the environment by a configurable amount
   
 </p>
