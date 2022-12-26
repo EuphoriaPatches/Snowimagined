@@ -4,7 +4,7 @@
   A [Complementary Reimagined](https://www.complementary.dev/reimagined/) edit 
 
 ## Download
-[![Download on GitHub](https://img.shields.io/badge/-GitHub-99e0ff?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/OverimaginedShaders/Snowimagined/archive/refs/heads/main.zip)
+[![Download on GitHub](https://img.shields.io/badge/-GitHub-99e0ff?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/OverimaginedShaders/Snowimagined/releases/download/Release/SnowimaginedShaders-1.0.zip)
 
 ## Community
 * Join the [Complementary Discord](https://discord.gg/A6faFYt) to get support and interact with the community! You can find us in the "overimagined" thread under #shader-general.
