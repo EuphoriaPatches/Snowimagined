@@ -11,14 +11,14 @@ if (mat < 10512) {
                             else if (mat == 10004 || mat == 10005) { // Grounded Waving Foliage
                                 subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 
-                                DoFoliageColorTweaks(color.rgb, shadowMult, lViewPos);
+                                DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, lViewPos);
                             }
                         } else {
                             if (mat == 10008) { // Leaves
                                 #include "/lib/materials/specificMaterials/leaves.glsl"
 
                                 #if SHADOW_QUALITY < 3
-                                    shadowMult = vec3(sqrt1(max0(lmCoordM.y - 0.95) * 20.0));
+                                    shadowMult = vec3(sqrt1(max0(max(lmCoordM.y, min1(lmCoordM.x * 2.0)) - 0.95) * 20.0)); //dup5823
                                 #endif
                             }
                             else /*if (mat == 10012)*/ { // Vine
@@ -31,16 +31,27 @@ if (mat < 10512) {
                         if (mat < 10024) {
                             if (mat == 10016 || mat == 10017) { // Non-waving Foliage
                                 subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
-
-                                DoFoliageColorTweaks(color.rgb, shadowMult, lViewPos);
                             }
                             else /*if (mat == 10020)*/ { // Upper Waving Foliage
                                 subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 
-                                DoFoliageColorTweaks(color.rgb, shadowMult, lViewPos);
+                                DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, lViewPos);
                             }
                         } else {
-                            if (mat == 10024) { //
+                            if (mat == 10024) { // Brewing Stand
+                                vec3 worldPos = playerPos + cameraPosition;
+                                vec3 fractPos = fract(worldPos.xyz);
+                                vec3 coordM = abs(fractPos.xyz - 0.5);
+                                float cLength = dot(coordM, coordM) * 1.3333333;
+                                cLength = pow2(1.0 - cLength);
+
+                                if (color.r + color.g > color.b * 3.0 && max(coordM.x, coordM.z) < 0.07) {
+                                    emission = 2.2 * pow2(cLength);
+                                } else {
+                                    lmCoordM.x = max(lmCoordM.x * 0.9, cLength);
+                                    
+                                    #include "/lib/materials/specificMaterials/cobblestone.glsl"
+                                }
                             }
                             else /*if (mat == 10028)*/ { // Hay Block
                                 smoothnessG = pow2(color.r) * 0.5;
@@ -180,8 +191,8 @@ if (mat < 10512) {
                         } else {
                             if (mat == 10072) { // Fire
                                 noSmoothLighting = true, noDirectionalShading = true;
-                                emission = 2.0;
-                                color.rgb = pow1_5(color.rgb);
+                                emission = 1.5;
+                                color.rgb *= sqrt1(GetLuminance(color.rgb));
                             }
                             else /*if (mat == 10076)*/ { // Soul Fire
                                 noSmoothLighting = true, noDirectionalShading = true;
@@ -271,11 +282,11 @@ if (mat < 10512) {
                                     noiseFactor = 0.66;
                                 #endif
                             }
-                            else /*if (mat == 10124)*/ { // Grass Block:Snowy
+                            else /*if (mat == 10124)*/ { // Snowy Variants of Grass Block, Podzol, Mycelium
                                 float dotColor = dot(color.rgb, color.rgb);
-                                if (dotColor > 1.5) { // Grass Block:Snowy:Snowy Part
+                                if (dotColor > 1.5) { // Snowy Variants:Snowy Part
                                     #include "/lib/materials/specificMaterials/snow.glsl"
-                                } else { // Grass Block:Snowy:dirt Part
+                                } else { // Snowy Variants:Dirt Part
                                     #include "/lib/materials/specificMaterials/dirt.glsl"
                                 }
                             }
@@ -288,7 +299,7 @@ if (mat < 10512) {
                 if (mat < 10160) {
                     if (mat < 10144) {
                         if (mat < 10136) {
-                            if (mat == 10128) { // Dirt, Coarse Dirt, Rooted Dirt, Podzol, Mycelium, Dirt Path, Farmland:Dry
+                            if (mat == 10128) { // Dirt, Coarse Dirt, Rooted Dirt, Podzol:Normal, Mycelium:Normal, Dirt Path, Farmland:Dry
                                 #include "/lib/materials/specificMaterials/dirt.glsl"
                             }
                             else /*if (mat == 10132)*/ { // Grass Block:Normal
@@ -465,7 +476,7 @@ if (mat < 10512) {
                                 if (color.r / color.b < 3.0) { // Crimson Stem:Flat Part, Crimson Hyphae:Flat Part
                                     #include "/lib/materials/specificMaterials/planks/crimsonPlanks.glsl"
                                 } else { // Crimson Stem:Emissive Part, Crimson Hyphae:Emissive Part
-                                    emission = pow2(color.r) * 4.2;
+                                    emission = pow2(color.r) * 6.5;
                                     snowIntensity = 0.6;
                                     snowEmission = 0.15;
                                 }
@@ -483,7 +494,7 @@ if (mat < 10512) {
                                     !CheckForColor(color.rgb, vec3(69, 45, 92))) { // Warped Stem:Flat Part, Warped Hyphae:Flat Part
                                     #include "/lib/materials/specificMaterials/planks/warpedPlanks.glsl"
                                 } else { // Warped Stem:Emissive Part, Warped Hyphae:Emissive Part
-                                    emission = pow2(color.g + 0.2 * color.b) * 3.4;
+                                    emission = pow2(color.g + 0.2 * color.b) * 4.5 + 0.15;
                                     snowIntensity = 0.7;
                                     snowEmission = 0.3;
                                 }
@@ -569,7 +580,7 @@ if (mat < 10512) {
                                 #endif
                                 
                                 #if GLOWING_ORES >= 2
-                                    emission = pow2(color.g * 6.0);
+                                    emission = min(pow2(color.g * 6.0), 8.0);
                                     color.rgb *= color.rgb;
                                     snowIntensity = 0.2;
                                     snowEmission = 0.8;
@@ -817,15 +828,14 @@ if (mat < 10512) {
                                 #include "/lib/materials/specificMaterials/emeraldBlock.glsl"
                             }
                             else /*if (mat == 10340)*/ { // Emerald Ore
-                                if (color.r != color.g && color.g > 0.45) { // Emerald Ore:Emerald Part
+                                float dif = GetMaxColorDif(color.rgb);
+                                if (dif > 0.4 || color.b > 0.85) { // Emerald Ore:Emerald Part
                                     #include "/lib/materials/specificMaterials/emeraldBlock.glsl"
                                     #if GLOWING_ORES >= 1
-                                        if (color.g - color.b > 0.2 || color.b > 0.9) {
-                                            emission = 2.0;
-                                            color.rgb *= color.rgb;
-                                            snowIntensity = 0.7;
-                                            snowEmission = 0.3;
-                                        }
+                                        emission = 2.0;
+                                        color.rgb *= color.rgb;
+                                        snowIntensity = 0.7;
+                                        snowEmission = 0.3;
                                     #endif
                                 } else { // Emerald Ore:Stone Part
                                     #include "/lib/materials/specificMaterials/stone.glsl"
@@ -833,15 +843,14 @@ if (mat < 10512) {
                             }
                         } else {
                             if (mat == 10344) { // Deepslate Emerald Ore
-                                if (color.r != color.g && color.g > 0.45) { // Deepslate Emerald Ore:Emerald Part
+                                float dif = GetMaxColorDif(color.rgb);
+                                if (dif > 0.4 || color.b > 0.85) { // Deepslate Emerald Ore:Emerald Part
                                     #include "/lib/materials/specificMaterials/emeraldBlock.glsl"
                                     #if GLOWING_ORES >= 1
-                                        if (color.g - color.b > 0.2 || color.b > 0.9) {
-                                            emission = 2.0;
-                                            color.rgb *= color.rgb;
-                                            snowIntensity = 0.7;
-                                            snowEmission = 0.3;
-                                        }
+                                        emission = 2.0;
+                                        color.rgb *= color.rgb;
+                                        snowIntensity = 0.7;
+                                        snowEmission = 0.3;
                                     #endif
                                 } else { // Deepslate Emerald Ore:Deepslate Part
                                     #include "/lib/materials/specificMaterials/deepslate.glsl"
@@ -969,7 +978,7 @@ if (mat < 10512) {
                                 noSmoothLighting = true, noDirectionalShading = true;
                                 lmCoordM.y = 0.0;
                                 if (color.b > 0.28 && color.r > 0.9) { // Jack o'Lantern:Emissive Part
-                                    emission = pow2(pow2(pow2(color.g))) * 6.0;
+                                    emission = pow2(pow2(pow2(color.g))) * 5.0;
                                 }
                             }
                         }
@@ -999,10 +1008,9 @@ if (mat < 10512) {
                                 noSmoothLighting = true; noDirectionalShading = true;
                                 lmCoordM = vec2(0.95, 0.0);
 
-                                float factor = pow2(color.g);
-                                emission = pow2(factor) * 4.0;
-                                if (CheckForColor(color.rgb, vec3(204, 134, 84))) emission *= 1.6;
-                                color.rg += factor * vec2(0.3, 0.15);
+                                emission = max0(color.g - 0.375) * 3.7;
+                                //if (CheckForColor(color.rgb, vec3(204, 134, 84))) emission *= 2.1;
+                                color.rg += emission * vec2(0.15, 0.05);
                             }
                         }
                     }
@@ -1092,12 +1100,12 @@ if (mat < 10512) {
 
                                 vec2 signMidCoordPosM = (floor((signMidCoordPos + 1.0) * 8.0) + 0.5) * 0.125 - 1.0;
                                 float dotsignMidCoordPos = dot(signMidCoordPosM, signMidCoordPosM);
-                                float lBlockPosM = pow2(max0(1.0 - 1.125 * pow2(dotsignMidCoordPos)));
-                                emission = pow2(color.b) * 0.8 + 3.0 * lBlockPosM;
+                                float lBlockPosM = pow2(max0(1.0 - 1.7 * pow2(pow2(dotsignMidCoordPos))));
+                                emission = pow2(color.b) * 0.8 + 2.2 * lBlockPosM;
 
                                 emission *= 0.4 + max0(0.6 - 0.006 * lViewPos);
 
-                                color.rb *= vec2(1.13, 1.05);
+                                color.rb *= vec2(1.13, 1.1);
 
                                 #ifdef COATED_TEXTURES
                                     noiseFactor = 0.5;
@@ -1107,24 +1115,27 @@ if (mat < 10512) {
                                 noSmoothLighting = true; noDirectionalShading = true;
                                 lmCoordM.x = 0.65;
 
-                                emission = 0.1 + pow2(pow2(color.r)) * 4.0;
+                                emission = 0.1 + pow2(pow2(color.r)) * 3.0;
 
                                 #if RAIN_PUDDLES >= 1
                                     noPuddles = color.g * 4.0;
                                 #endif
 
                                 color.gb *= vec2(1.0 - min(color.g, 0.6));
+
+                                maRecolor = vec3(emission * 0.1);
                             }
                         } else {
                             if (mat == 10456) { // Command Block+
                                 vec2 absCoord = abs(signMidCoordPos - 0.0625);
                                 float maxCoord = max(absCoord.x, absCoord.y);
                                 if (maxCoord < 0.3125 && abs(color.r - color.g) > 0.1) {
-                                    emission = 8.0;
+                                    emission = 6.0;
                                     color.rgb *= color.rgb;
                                     smoothnessG = 1.0;
                                     smoothnessD = 1.0;
                                     highlightMult = 2.0;
+                                    maRecolor = vec3(0.5);
                                     snowIntensity = 0.1;
                                 } else {
                                     smoothnessG = dot(color.rgb, color.rgb) * 0.33;
@@ -1191,8 +1202,9 @@ if (mat < 10512) {
                             else /*if (mat == 10492)*/ { // Weeping Vines, Twisting Vines, Crimson Fungus, Warped Fungus
                                 noSmoothLighting = true;
                                 if (color.r > 0.91) {
-                                    emission = 2.0 * color.g;
+                                    emission = 2.5 * color.g;
                                     color.r *= 1.2;
+                                    maRecolor = vec3(0.1);
                                     snowIntensity = 0.5;
                                 }
                             }
@@ -1201,12 +1213,15 @@ if (mat < 10512) {
                         if (mat < 10504) {
                             if (mat == 10496) { // Torch
                                 noDirectionalShading = true;
-                                lmCoordM.x = min1(0.7 + 0.3 * pow2(1.0 - signMidCoordPos.y));
                                 
                                 if (color.r > 0.95) {
-                                    emission = 2.8;
-                                    color.r *= 1.2;
-                                    color.b *= 0.9;
+                                    noSmoothLighting = true;
+                                    lmCoordM.x = 1.0;
+                                    emission = GetLuminance(color.rgb) * 3.0;
+                                    color.r *= 1.35;
+                                    color.b *= 0.5;
+                                } else {
+                                    lmCoordM.x = min1(0.7 + 0.3 * pow2(1.0 - signMidCoordPos.y));
                                 }
                                 emission += 0.0001; // No light reducing during noon
                             }
@@ -1218,10 +1233,10 @@ if (mat < 10512) {
 
                                 float dotColor = dot(color.rgb, color.rgb);
                                 if (dotColor > 2.0) {
-                                    emission = 2.3;
+                                    emission = 1.6;
                                     emission *= 0.4 + max0(0.6 - 0.006 * lViewPos);
 
-                                    color.rgb = pow2(pow2(color.rgb));
+                                    color.rgb = pow2(color.rgb);
                                     color.g *= 0.95;
                                 } else {
                                     
@@ -1253,22 +1268,11 @@ if (mat < 10512) {
                         if (mat < 10520) {
                             if (mat == 10512) { // Chorus Flower:Dead
                                 if (color.b < color.g) {
-                                    emission = 12.0;
+                                    emission = 10.7;
                                     color.rgb *= color.rgb * dot(color.rgb, color.rgb) * vec3(0.4, 0.35, 0.4);
                                     snowIntensity = 0.1;
                                     snowEmission = 0.8;
                                 }
-                                /*vec2 coordM = abs((floor((signMidCoordPos + 1.0) * 6.0) + 0.5) - 6.0);
-                                
-                                if (max(coordM.x, coordM.y) < 2.0 && coordM.x + coordM.y < 2.5 && absMidCoordPos.x == absMidCoordPos.y) { // Center
-                                    emission = 12.0;
-
-                                    if (color.b < color.g) { // Not mipmapped
-                                        color.rgb *= color.rgb * dot(color.rgb, color.rgb) * vec3(0.4, 0.35, 0.4);
-                                    } else { // mipmapped
-                                        color.rgb = vec3(0.3, 0.25, 0.2);
-                                    }
-                                }*/
                             }
                             else /*if (mat == 10516)*/ { // Furnace:Lit
                                 lmCoordM.x *= 0.95;
@@ -1304,8 +1308,8 @@ if (mat < 10512) {
                                 lmCoordM.x = min(lmCoordM.x * 0.9, 0.77);
 
                                 if (color.b > 0.6) {
-                                    emission = 3.2;
-                                    color.rgb *= color.rgb;
+                                    emission = 2.3;
+                                    color.rgb = pow1_5(color.rgb);
                                     color.r = min1(color.r + 0.1);
                                 }
                                 emission += 0.0001; // No light reducing during noon
@@ -1366,7 +1370,7 @@ if (mat < 10512) {
                                 emission = min(pow2(pow2(dotColor) * dotColor) * 1.4 + dotColor * 0.5, 6.0);
                                 emission *= skyLightFactor;
                             }
-                            else /*if (mat == 10548)*/ { // Enchanting Table:No Book
+                            else /*if (mat == 10548)*/ { // Enchanting Table:Base
                                 float dotColor = dot(color.rgb, color.rgb);
                                 if (dotColor < 0.19 && color.r < color.b) {
                                     #include "/lib/materials/specificMaterials/obsidian.glsl"
@@ -1406,8 +1410,8 @@ if (mat < 10512) {
                                         float minCoord = min(absCoord.x, absCoord.y);
                                         if (CheckForColor(color.rgb, vec3(153, 198, 147))
                                         && minCoord > 0.25) { // End Portal Frame:Emissive Corner Bits
-                                            emission = 1.5;
-                                            color.rgb = vec3(0.4, 1.0, 0.5);
+                                            emission = 1.2;
+                                            color.rgb = vec3(0.45, 1.0, 0.6);
                                             snowIntensity = 0.65;
                                             snowEmission = 0.6;
                                         }
@@ -1424,7 +1428,7 @@ if (mat < 10512) {
                                 if (color.r < color.b) { // Lantern:Metal Part
                                     #include "/lib/materials/specificMaterials/lanternMetal.glsl"
                                 } else { // Lantern:Emissive Part
-                                    emission = pow2(color.g) * 7.0 + 0.5;
+                                    emission = pow2(color.g) * 5.0 + 1.0;
 
                                     color.gb *= vec2(0.8, 0.7);
                                 }
@@ -1436,7 +1440,7 @@ if (mat < 10512) {
                                 if (min1(color.r * 3.0) >= color.g + 0.25) { // Soul Lantern:Metal Part, Chain
                                     #include "/lib/materials/specificMaterials/lanternMetal.glsl"
                                 } else { // Soul Lantern:Emissive Part
-                                    emission = color.r * 3.5 + 0.5;
+                                    emission = color.r * 3.0 + 0.5;
                                 }
                             }
                         } else {
@@ -1495,23 +1499,24 @@ if (mat < 10512) {
                             if (mat == 10592) { // Respawn Anchor:Lit
                                 noSmoothLighting = true;
 
-                                #include "/lib/materials/specificMaterials/cryingObsidian.glsl"
-                                emission += 0.2;
 
                                 vec2 absCoord = abs(signMidCoordPos);
-                                if (NdotU > 0.9 && max(absCoord.x, absCoord.y) < 0.754) {
+                                if (NdotU > 0.9 && max(absCoord.x, absCoord.y) < 0.754) { // Portal
                                     highlightMult = 0.0;
                                     smoothnessD = 0.0;
-                                    emission = color.r * 5.0;
+                                    emission = pow2(color.r) * color.r * 16.0;
                                     snowIntensity = 0.0;
                                 } else if (color.r + color.g > 1.3) { // Respawn Anchor:Glowstone Part
-                                    emission = 5.5;
+                                    emission = 4.2;
+                                } else {
+                                    #include "/lib/materials/specificMaterials/cryingObsidian.glsl"
+                                    emission += 0.2;
                                 }
                             }
                             else /*if (mat == 10596)*/ { // Redstone Wire:Lit
                                 #include "/lib/materials/specificMaterials/redstoneBlock.glsl"
 
-                                emission = pow2(min(color.r, 0.9)) * 4.0;
+                                emission = pow2(min(color.r, 0.9)) * 3.7;
                                 color.gb *= 0.25;
                                 snowIntensity = 0.0;
                             }
@@ -1533,8 +1538,8 @@ if (mat < 10512) {
                             if (mat == 10608) { // Redstone Block
                                 #include "/lib/materials/specificMaterials/redstoneBlock.glsl"
                                 #ifdef EMISSIVE_REDSTONE_BLOCK
-                                    emission = 0.4 + 3.5 * pow2(pow2(color.r));
-                                    color.gb *= 0.5;
+                                    emission = 0.5 + 3.0 * pow2(pow2(color.r));
+                                    color.gb *= 0.65;
                                     snowIntensity = 0.5;
                                 #endif
                             }
@@ -1555,8 +1560,8 @@ if (mat < 10512) {
                             if (mat == 10616) { // Redstone Ore:Lit
                                 if (color.r - color.g > 0.2) { // Redstone Ore:Lit:Redstone Part
                                     #include "/lib/materials/specificMaterials/redstoneBlock.glsl"
-                                    emission = pow2(pow2(color.r)) * 6.0;
-                                    color.gb *= 0.05;
+                                    emission = pow2(pow2(color.r)) * 5.0;
+                                    color.gb *= 0.1;
                                     snowIntensity = 0.5;
                                     snowEmission = 0.5;
                                 } else { // Redstone Ore:Lit:Stone Part
@@ -1634,8 +1639,9 @@ if (mat < 10512) {
                             
                                 if (color.b > 0.1) {
                                     float dotColor = dot(color.rgb, color.rgb);
-                                    emission = pow2(dotColor) * 1.3;
+                                    emission = pow2(dotColor) * 0.8;
                                     color.rgb = pow1_5(color.rgb);
+                                    maRecolor = vec3(emission * 0.2);
                                 }
                             }
                             else /*if (mat == 10644)*/ { // Repeater, Comparator
@@ -1661,7 +1667,7 @@ if (mat < 10512) {
                                 lmCoordM = vec2(1.0, 0.0);
 
                                 float dotColor = dot(color.rgb, color.rgb);
-                                emission = min(pow2(pow2(pow2(dotColor * 0.6))), 5.0) + 0.1;
+                                emission = min(pow2(pow2(pow2(dotColor * 0.6))), 5.0) * 0.8 + 0.1;
                             }
                             else /*if (mat == 10652)*/ { // Campfire:Lit
                                 vec3 fractPos = fract(playerPos + cameraPosition) - 0.5;
@@ -1672,8 +1678,8 @@ if (mat < 10512) {
                                     #include "/lib/materials/specificMaterials/oakWood.glsl"
                                 } else if (color.r > color.b || dotColor > 2.9) {
                                     noDirectionalShading = true;
-                                    emission = 3.0;
-                                    color.rgb = pow1_5(color.rgb);
+                                    emission = 1.8;
+                                    color.rgb *= sqrt1(GetLuminance(color.rgb));
                                 }
                             }
                         }
@@ -1687,9 +1693,8 @@ if (mat < 10512) {
                                     #include "/lib/materials/specificMaterials/oakWood.glsl"
                                 } else if (color.g - color.r > 0.1 || dotColor > 2.9) {
                                     noDirectionalShading = true;
-                                    emission = 1.5;
-                                    color.rgb = pow1_5(color.rgb);
-                                    color.r = min1(color.r + 0.15);
+                                    emission = 1.6;
+                                    color.rgb *= sqrt1(GetLuminance(color.rgb));
                                 }
                             }
                             else /*if (mat == 10660)*/ { // Campfire:Unlit, Soul Campfire:Unlit
@@ -1736,40 +1741,19 @@ if (mat < 10512) {
                             }
                         } else {
                             if (mat == 10680) { // Ochre Froglight
-                                noSmoothLighting = true; noDirectionalShading = true;
-                                lmCoordM = vec2(0.9, 0.0);
-
-                                vec2 signMidCoordPosM = abs((floor((signMidCoordPos + 1.0) * 8.0) + 0.5) * 0.125 - 1.0);
-                                float value = 1.0 - max(signMidCoordPosM.x, signMidCoordPosM.y);
-                                emission = 0.3 + 5.5 * pow2(value);
-                                if (color.g < 0.99) emission = min(emission, 0.75);
-
-                                color.rgb = pow2(color.rgb);
+                                float frogPow = 8.0;
+                                #include "/lib/materials/specificMaterials/froglights.glsl"
                             }
                             else /*if (mat == 10684)*/ { // Verdant Froglight
-                                noSmoothLighting = true; noDirectionalShading = true;
-                                lmCoordM = vec2(0.9, 0.0);
-
-                                vec2 signMidCoordPosM = abs((floor((signMidCoordPos + 1.0) * 8.0) + 0.5) * 0.125 - 1.0);
-                                float value = 1.0 - max(signMidCoordPosM.x, signMidCoordPosM.y);
-                                emission = 0.3 + 5.5 * pow2(value);
-                                if (color.b < 0.97) emission = min(emission, 0.6);
-
-                                color.rgb = pow2(color.rgb);
+                                float frogPow = 16.0;
+                                #include "/lib/materials/specificMaterials/froglights.glsl"
                             }
                         }
                     } else {
                         if (mat < 10696) {
                             if (mat == 10688) { // Pearlescent Froglight
-                                noSmoothLighting = true; noDirectionalShading = true;
-                                lmCoordM = vec2(0.9, 0.0);
-
-                                vec2 signMidCoordPosM = abs((floor((signMidCoordPos + 1.0) * 8.0) + 0.5) * 0.125 - 1.0);
-                                float value = 1.0 - max(signMidCoordPosM.x, signMidCoordPosM.y);
-                                emission = 0.3 + 5.5 * pow2(value);
-                                if (color.g < 0.99) emission = min(emission, 0.6);
-
-                                color.rgb = pow2(color.rgb);
+                                float frogPow = 24.0;
+                                #include "/lib/materials/specificMaterials/froglights.glsl"
                             }
                             else /*if (mat == 10692)*/ { // Reinforced Deepslate
                                 if (abs(color.r - color.g) < 0.01) { // Reinforced Deepslate:Deepslate Part
@@ -1878,7 +1862,7 @@ if (mat < 10512) {
                                 float dotsignMidCoordPos = dot(signMidCoordPosM, signMidCoordPosM);
                                 float lBlockPosM = pow2(max0(1.0 - 1.125 * pow2(dotsignMidCoordPos)));
 
-                                emission = 5.0 * lBlockPosM;
+                                emission = 4.5 * lBlockPosM;
                                 color.rgb = pow2(color.rgb);
                                 snowIntensity = 0.45;
                                 snowEmission = 0.2;

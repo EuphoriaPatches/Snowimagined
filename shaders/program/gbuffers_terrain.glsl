@@ -88,17 +88,22 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
 #endif
 
 //Common Functions//
-void DoFoliageColorTweaks(inout vec3 color, inout vec3 shadowMult, float lViewPos) {
+void DoFoliageColorTweaks(inout vec3 color, inout vec3 shadowMult, inout float snowMinNdotU, float lViewPos) {
 	float factor = max(80.0 - lViewPos, 0.0);
-	shadowMult *= 1.0 + 0.005 * noonFactor * factor;
+	shadowMult *= 1.0 + 0.004 * noonFactor * factor;
 
-	if (signMidCoordPos.x < 0.0) shadowMult *= 1.15;
-	else shadowMult *= 0.87;
+	if (signMidCoordPos.x < 0.0) color.rgb *= 1.08;
+	else color.rgb *= 0.93;
 }
 
 void DoBrightBlockTweaks(inout vec3 shadowMult, inout float highlightMult) {
 	shadowMult = vec3(0.7);
 	highlightMult *= 1.428;
+}
+
+float GetMaxColorDif(vec3 color) {
+	vec3 dif = abs(vec3(color.r - color.g, color.g - color.b, color.r - color.b));
+	return max(dif.r, max(dif.g, dif.b));
 }
 
 //Includes//
@@ -150,7 +155,7 @@ void main() {
 		#ifdef GENERATED_NORMALS
 			bool noGeneratedNormals = false;
 		#endif
-		float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 1.0;
+		float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 1.0, snowMinNdotU = 0.0;
 		vec2 lmCoordM = lmCoord;
 		vec3 shadowMult = vec3(1.0);
 
@@ -160,6 +165,7 @@ void main() {
 		float IPBRMult = 1.0;
 
 		#ifdef IPBR
+			vec3 maRecolor = vec3(0.0);
 			#include "/lib/materials/terrainMaterials.glsl"
 
 			#ifdef GENERATED_NORMALS
@@ -174,8 +180,14 @@ void main() {
 				noDirectionalShading = true;
 			} else if (mat == 10004) { // Grounded Waving Foliage
 				subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
+
+				DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, lViewPos);
 			} else if (mat == 10008) { // Leaves
 				#include "/lib/materials/specificMaterials/leaves.glsl"
+
+				#if SHADOW_QUALITY < 3
+					shadowMult = vec3(sqrt1(max0(max(lmCoordM.y, min1(lmCoordM.x * 2.0)) - 0.95) * 20.0)); //dup5823
+				#endif
 			} else if (mat == 10012) { // Vine
 				#include "/lib/materials/specificMaterials/leaves.glsl"
 				shadowMult = vec3(1.2);
@@ -183,6 +195,8 @@ void main() {
 				subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 			} else if (mat == 10020) { // Upper Waving Foliage
 				subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
+
+				DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, lViewPos);
 			}
 
 			else if (lmCoord.x > 0.99999) lmCoordM.x = 0.95;
@@ -248,6 +262,10 @@ void main() {
 		           noSmoothLighting, noDirectionalShading, noVanillaAO, subsurfaceMode,
 				   smoothnessG, highlightMult, emission);
 
+		#ifdef IPBR
+			color.rgb += maRecolor;
+		#endif
+
 		#ifdef PBR_REFLECTIONS
 			#ifdef OVERWORLD
 				skyLightFactor = pow2(max(lmCoord.y - 0.7, 0.0) * 3.33333);
@@ -296,7 +314,7 @@ out vec4 glColor;
 	uniform float viewWidth, viewHeight;
 #endif
 
-#ifdef WAVING_ANYTHING
+#ifdef WAVING_ANYTHING_TERRAIN
 	uniform float frameTimeCounter;
 
 	uniform vec3 cameraPosition;
@@ -322,7 +340,7 @@ attribute vec3 at_midBlock;
 	#include "/lib/util/jitter.glsl"
 #endif
 
-#ifdef WAVING_ANYTHING
+#ifdef WAVING_ANYTHING_TERRAIN
 	#include "/lib/materials/wavingBlocks.glsl"
 #endif
 
@@ -348,7 +366,7 @@ void main() {
 
 	mat = int(mc_Entity.x + 0.5);
 
-	#ifdef WAVING_ANYTHING
+	#ifdef WAVING_ANYTHING_TERRAIN
 		vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 
 		DoWave(position.xyz, mat);
