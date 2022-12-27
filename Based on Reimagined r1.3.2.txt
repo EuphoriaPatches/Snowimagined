@@ -1,1 +1,0 @@
-This version of Snowimagined Shaders is based on Complementary Reimagined r1.3.2 by EminGT
