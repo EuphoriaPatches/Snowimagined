@@ -1,7 +1,19 @@
 <img src="https://user-images.githubusercontent.com/46494907/203031082-358d5c60-a354-483a-94a3-44ae33409bfe.png" alt="Snowimagined_logo" width="100" height="auto" />
   <h1>Snowimagined Shaders</h1>
   
-  A [Complementary Reimagined](https://www.complementary.dev/reimagined/) edit 
+  A [Complementary Reimagined](https://www.complementary.dev/reimagined/) edit
+
+# Update: You can get this feature with our add-on called Euphoria Patches!
+## Get it here: https://modrinth.com/mod/euphoria-patches
+
+### To enable the feature go to: Shader Setting > Euphoria Patches Setting > World > Seasons > Winter
+(Other seasons will come in a future update)
+
+<be>
+<br>
+<br>
+<br>
+<br>
 
 ## Download
 [![Download on modrinth](https://img.shields.io/badge/-Modrinth-1BD96A?style=for-the-badge&logo=modrinth&logoColor=white)](https://modrinth.com/shader/snowimagined)
