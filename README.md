@@ -26,7 +26,7 @@
 
 
 ## Community
-* Join the [Complementary Discord](https://discord.gg/A6faFYt) to get support and interact with the community! You can find us in the "overimagined" thread under #shader-general.
+* Join the [Complementary Discord](https://discord.com/invite/985QQxVQZF) to get support and interact with the community! You can find us in the "euphoria-patches" channel.
 
 ## Features
 <details><summary>Click to Expand</summary>
